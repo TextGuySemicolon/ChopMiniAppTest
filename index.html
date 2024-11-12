@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | ChopMiniApp</title>
+
+        <!-- Include Telegram Web App script -->
+        <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+        <!-- Include Socket.IO from CDN -->
+        <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
+        <style>
+          /* Unity canvas style */
+          #unity-canvas {
+            background-color: cadetblue;
+            width: 360px;
+            height: 640px;
+          }
+          /* Hide the canvas while Unity loads */
+          #unity-canvas.loading {
+            display: none;
+          }
+          /* Loading message */
+          #loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 24px;
+          }
+        </style>
+  </head>
+  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
+    <canvas id="unity-canvas" width=360 height=640 tabindex="-1" style="width: 360px; height: 640px; background: #231F20"></canvas>
+    <script src="Build/ChopMiniApp.loader.js"></script>
+    <script>
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+
+        var canvas = document.querySelector("#unity-canvas");
+        canvas.style.width = "100%";
+        canvas.style.height = "100%";
+        canvas.style.position = "fixed";
+
+        document.body.style.textAlign = "left";
+      }
+
+      var myUnityInstance;
+      createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
+        dataUrl: "Build/ChopMiniApp.data",
+        frameworkUrl: "Build/ChopMiniApp.framework.js",
+        codeUrl: "Build/ChopMiniApp.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Chop",
+        productName: "ChopMiniApp",
+        productVersion: "1.0.8",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((unityInstance) => {
+                //added by JY
+                myUnityInstance = unityInstance;
+
+                // Delay the SendMessage call slightly to allow Unity to be ready
+                setTimeout(() => {
+                  // Check if Telegram SDK is available
+                  if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
+                      const authData = Telegram.WebApp.initData;
+                      console.log("Telegram auth data:", authData);  // Debugging line
+                      if (myUnityInstance) {
+                        myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
+                      } else {
+                        console.error("Unity instance not available");
+                      }
+                  } else {
+                    console.error("Telegram SDK not ready");
+                  }
+                }, 200);  // Adjust the delay as needed
+
+              }).catch((message) => {
+                alert(message);
+              });
+    </script>
+  </body>
+</html>
