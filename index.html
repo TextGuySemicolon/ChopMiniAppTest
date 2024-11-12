@@ -35,7 +35,7 @@
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
     <canvas id="unity-canvas" width=360 height=640 tabindex="-1" style="width: 360px; height: 640px; background: #231F20"></canvas>
-    <script src="Build/ChopMiniApp.loader.js"></script>
+    <script src="Build/ChopMiniAppTest.loader.js"></script>
     <script>
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
@@ -55,9 +55,9 @@
       var myUnityInstance;
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/ChopMiniApp.data",
-        frameworkUrl: "Build/ChopMiniApp.framework.js",
-        codeUrl: "Build/ChopMiniApp.wasm",
+        dataUrl: "Build/ChopMiniAppTest.data",
+        frameworkUrl: "Build/ChopMiniAppTest.framework.js",
+        codeUrl: "Build/ChopMiniAppTest.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Chop",
         productName: "ChopMiniApp",
