@@ -102,12 +102,15 @@
 
     // Initialize Telegram API and retrieve authData
     function initTelegram() {
-      if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
-        authData = Telegram.WebApp.initData;
-        console.log("Telegram auth data:", authData);  // Debugging line
-      } else {
-        console.error("Telegram SDK not ready or initData missing");
-      }
+      return new Promise((resolve, reject) => {
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
+          authData = Telegram.WebApp.initData;
+          console.log("Telegram auth data:", authData);  // Debugging line
+          resolve(authData);
+        } else {
+          reject("Telegram SDK not ready or initData missing");
+        }
+      });
     }
   //#endregion
 
