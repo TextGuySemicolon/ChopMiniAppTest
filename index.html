@@ -59,16 +59,16 @@
 
   //#region Build Info
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/ChopMiniAppTest.loader.js";
+    var loaderUrl = buildUrl + "/3f89ed4bd103dee4abb1b3442f1bf669.loader.js";
     var config = {
       arguments: [],
-      dataUrl: buildUrl + "/ChopMiniAppTest.data",
-      frameworkUrl: buildUrl + "/ChopMiniAppTest.framework.js",
-          codeUrl: buildUrl + "/ChopMiniAppTest.wasm",
+      dataUrl: buildUrl + "/3d40b71d203a3e9005622b68be86fb84.data",
+      frameworkUrl: buildUrl + "/2e45d0bb33f54e6d87dc40f7bcf4ea68.framework.js",
+          codeUrl: buildUrl + "/ef846bd583c6bc790fc0766d008ec403.wasm",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "Chop",
       productName: "ChopMiniApp",
-      productVersion: "v1.1.0 ",
+      productVersion: "v1.1.1",
       showBanner: unityShowBanner,
     };
   //#endregion
@@ -134,8 +134,7 @@
           setTimeout(() => {
             myUnityInstance.SendMessage('Telegram', 'DebugText', "Initialize");
             if (authData && myUnityInstance) {
-              myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', JSON.stringify(authData));
-              myUnityInstance.SendMessage('Telegram', 'DebugText', "Authenticated: " + authData);
+              myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
             } else {
               console.error("Auth data or Unity instance not available");
               myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram SDK not ready or initData missing");
