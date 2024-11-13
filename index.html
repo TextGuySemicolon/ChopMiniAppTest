@@ -158,7 +158,7 @@
 
     // Initialize Telegram and load Unity after authData is ready
     initTelegram()
-    .then(() => {
+    .then((authData) => {
       loadUnity();
     })
     .catch((error) => {
