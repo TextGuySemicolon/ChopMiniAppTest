@@ -102,16 +102,13 @@
 
     // Initialize Telegram API and retrieve authData
     function initTelegram() {
-      myUnityInstance.SendMessage('Telegram', 'DebugText', "calling initTelegram");
       return new Promise((resolve, reject) => {
         if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
           authData = Telegram.WebApp.initData;
           console.log("Telegram auth data:", authData);  // Debugging line
-          myUnityInstance.SendMessage('Telegram', 'DebugText', authData);
           resolve(authData);
         } else {
           reject("Telegram SDK not ready or initData missing");
-          myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram SDK not ready or initData missing");
         }
       });
     }
@@ -135,14 +132,27 @@
 
           myUnityInstance = unityInstance;
 
+
           // Send authData to Unity if available
           if (authData && myUnityInstance) {
             myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
           } else {
             console.error("Auth data or Unity instance not available");
+
+
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
+              authData = Telegram.WebApp.initData;
+              console.log("Telegram auth data:", authData);  // Debugging line
+              myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram auth data:", authData);
+              resolve(authData);
+            } else {
+              reject("Telegram SDK not ready or initData missing");
+              myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram SDK not ready or initData missing");
+            }
           }
         }).catch((message) => {
           alert(message);
+          myUnityInstance.SendMessage('Telegram', 'DebugText', message);
         });
       };
       document.body.appendChild(script);
@@ -153,12 +163,10 @@
     initTelegram()
     .then(() => {
       loadUnity();
-      myUnityInstance.SendMessage('Telegram', 'DebugText', "Loading Unity");
     })
     .catch((error) => {
       console.error("Error initializing Telegram:", error);
       loadUnity();  // Load Unity anyway, even if Telegram initialization fails
-      myUnityInstance.SendMessage('Telegram', 'DebugText', "Error initializing Telegram:", error);
     });
 
   document.body.appendChild(script);
