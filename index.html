@@ -4,89 +4,166 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | ChopMiniApp</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
 
         <!-- Include Telegram Web App script -->
         <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
         <!-- Include Socket.IO from CDN -->
         <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-
-        <style>
-          /* Unity canvas style */
-          #unity-canvas {
-            background-color: cadetblue;
-            width: 360px;
-            height: 640px;
-          }
-          /* Hide the canvas while Unity loads */
-          #unity-canvas.loading {
-            display: none;
-          }
-          /* Loading message */
-          #loading-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            font-size: 24px;
-          }
-        </style>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=360 height=640 tabindex="-1" style="width: 360px; height: 640px; background: #231F20"></canvas>
-    <script src="Build/ChopMiniAppTest.loader.js"></script>
-    <script>
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=360 height=640 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+      <div id="unity-footer">
+      </div>
+    </div>
+    
+<script>
+  var canvas = document.querySelector("#unity-canvas");
 
-        var canvas = document.querySelector("#unity-canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.position = "fixed";
+  //#region Banner
+  // Shows a temporary message banner/ribbon for a few seconds, or
+  // a permanent error message on top of the canvas if type=='error'.
+  // If type=='warning', a yellow highlight color is used.
+  // Modify or remove this function to customize the visually presented
+  // way that non-critical warnings and error messages are presented to the
+  // user.
+  function unityShowBanner(msg, type) {
+    var warningBanner = document.querySelector("#unity-warning");
+    function updateBannerVisibility() {
+      warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+    }
+    var div = document.createElement('div');
+    div.innerHTML = msg;
+    warningBanner.appendChild(div);
+    if (type == 'error') div.style = 'background: red; padding: 10px;';
+    else {
+      if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+      setTimeout(function() {
+        warningBanner.removeChild(div);
+        updateBannerVisibility();
+      }, 5000);
+    }
+    updateBannerVisibility();
+  }
+  //#endregion
 
-        document.body.style.textAlign = "left";
-      }
+  //#region Build Info
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/ChopMiniAppTest.loader.js";
+    var config = {
+      arguments: [],
+      dataUrl: buildUrl + "/ChopMiniAppTest.data",
+      frameworkUrl: buildUrl + "/ChopMiniAppTest.framework.js",
+          codeUrl: buildUrl + "/ChopMiniAppTest.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Chop",
+      productName: "ChopMiniApp",
+      productVersion: "1.0.8",
+      showBanner: unityShowBanner,
+    };
+  //#endregion
 
-      var myUnityInstance;
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        arguments: [],
-        dataUrl: "Build/ChopMiniAppTest.data",
-        frameworkUrl: "Build/ChopMiniAppTest.framework.js",
-        codeUrl: "Build/ChopMiniAppTest.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Chop",
-        productName: "ChopMiniApp",
-        productVersion: "1.0.8",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      }).then((unityInstance) => {
-                //added by JY
-                myUnityInstance = unityInstance;
+  //#region Mobile Setting
+    // By default, Unity keeps WebGL canvas render target size matched with
+    // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+    // Set this to false if you want to decouple this synchronization from
+    // happening inside the engine, and you would instead like to size up
+    // the canvas DOM size and WebGL render target sizes yourself.
+    // config.matchWebGLToCanvasSize = false;
 
-                // Delay the SendMessage call slightly to allow Unity to be ready
-                setTimeout(() => {
-                  // Check if Telegram SDK is available
-                  if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
-                      const authData = Telegram.WebApp.initData;
-                      console.log("Telegram auth data:", authData);  // Debugging line
-                      if (myUnityInstance) {
-                        myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
-                      } else {
-                        console.error("Unity instance not available");
-                      }
-                  } else {
-                    console.error("Telegram SDK not ready");
-                  }
-                }, 200);  // Adjust the delay as needed
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      // Mobile device style: fill the whole browser client area with the game canvas:
 
-              }).catch((message) => {
-                alert(message);
-              });
-    </script>
+      var meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+      document.getElementsByTagName('head')[0].appendChild(meta);
+      document.querySelector("#unity-container").className = "unity-mobile";
+      canvas.className = "unity-mobile";
+    } else {
+      // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+      canvas.style.width = "360px";
+      canvas.style.height = "640px";
+    }
+  //#endregion
+
+  //#region Telegram
+    let authData;
+
+    // Initialize Telegram API and retrieve authData
+    function initTelegram() {
+      myUnityInstance.SendMessage('Telegram', 'DebugText', "calling initTelegram");
+      return new Promise((resolve, reject) => {
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp.initData) {
+          authData = Telegram.WebApp.initData;
+          console.log("Telegram auth data:", authData);  // Debugging line
+          myUnityInstance.SendMessage('Telegram', 'DebugText', authData);
+          resolve(authData);
+        } else {
+          reject("Telegram SDK not ready or initData missing");
+          myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram SDK not ready or initData missing");
+        }
+      });
+    }
+  //#endregion
+
+  //#region Unity Instance
+    var myUnityInstance;
+
+    function loadUnity() {
+      document.querySelector("#unity-loading-bar").style.display = "block";
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          document.querySelector("#unity-loading-bar").style.display = "none";
+          document.querySelector("#unity-fullscreen-button").onclick = () => {
+            unityInstance.SetFullscreen(1);
+          };
+
+          myUnityInstance = unityInstance;
+
+          // Send authData to Unity if available
+          if (authData && myUnityInstance) {
+            myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
+          } else {
+            console.error("Auth data or Unity instance not available");
+          }
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    }
+    //#endregion
+
+    // Initialize Telegram and load Unity after authData is ready
+    initTelegram()
+    .then(() => {
+      loadUnity();
+      myUnityInstance.SendMessage('Telegram', 'DebugText', "Loading Unity");
+    })
+    .catch((error) => {
+      console.error("Error initializing Telegram:", error);
+      loadUnity();  // Load Unity anyway, even if Telegram initialization fails
+      myUnityInstance.SendMessage('Telegram', 'DebugText', "Error initializing Telegram:", error);
+    });
+
+  document.body.appendChild(script);
+
+</script>
+
   </body>
 </html>
