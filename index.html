@@ -68,7 +68,7 @@
       streamingAssetsUrl: "StreamingAssets",
       companyName: "Chop",
       productName: "ChopMiniApp",
-      productVersion: "1.0.8",
+      productVersion: "v1.1.0 ",
       showBanner: unityShowBanner,
     };
   //#endregion
@@ -134,7 +134,7 @@
           setTimeout(() => {
             myUnityInstance.SendMessage('Telegram', 'DebugText', "Initialize");
             if (authData && myUnityInstance) {
-              myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
+              myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', JSON.stringify(authData));
               myUnityInstance.SendMessage('Telegram', 'DebugText', "Authenticated: " + authData);
             } else {
               console.error("Auth data or Unity instance not available");
@@ -142,7 +142,6 @@
             }
           }, 500);  // Adjust the delay as needed
 
-          
         }).catch((message) => {
           alert(message);
         });
