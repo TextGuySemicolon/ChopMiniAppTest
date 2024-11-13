@@ -141,9 +141,7 @@
               authData = Telegram.WebApp.initData;
               console.log("Telegram auth data:", authData);  // Debugging line
               myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram auth data:" + authData);
-              resolve(authData);
             } else {
-              reject("Telegram SDK not ready or initData missing");
               myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram SDK not ready or initData missing");
             }
           }
