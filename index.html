@@ -135,6 +135,7 @@
             myUnityInstance.SendMessage('Telegram', 'DebugText', "Initialize");
             if (authData && myUnityInstance) {
               myUnityInstance.SendMessage('Telegram', 'OnAuthenticated', authData);
+              myUnityInstance.SendMessage('Telegram', 'DebugText', "Authenticated: " + authData);
             } else {
               console.error("Auth data or Unity instance not available");
               myUnityInstance.SendMessage('Telegram', 'DebugText', "Telegram SDK not ready or initData missing");
