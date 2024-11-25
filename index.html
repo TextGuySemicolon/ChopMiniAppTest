@@ -167,7 +167,7 @@
             backButton.show();
             backButton.onClick(function () {
                 // Notify Unity that the back button was pressed
-                unityInstance.SendMessage("BackButtonHandler", "OnBackButtonPressed");
+                myUnityInstance.SendMessage("BackButtonHandler", "OnBackButtonPressed");
             });
         }
 
