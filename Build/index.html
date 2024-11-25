@@ -59,12 +59,12 @@
 
   //#region Build Info
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/4c02fe42b3f35cc50c76f00b77736b2f.loader.js";
+    var loaderUrl = buildUrl + "/b981b1d9bfa33afe35f03e40145d3e8b.loader.js";
     var config = {
       arguments: [],
-      dataUrl: buildUrl + "/8bd1b48324ba3c3370625a9d64848191.data",
+      dataUrl: buildUrl + "/64db9ed20d2df3d60d020464e54b68ba.data",
       frameworkUrl: buildUrl + "/0cad32745a4070b2b86660b2c8725d99.framework.js",
-          codeUrl: buildUrl + "/567df2770a50651195cb7ca94b74f813.wasm",
+          codeUrl: buildUrl + "/37cb62c7941c6bb8ddb3d03588f0e7c0.wasm",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "Chop",
       productName: "ChopMiniApp",
@@ -94,7 +94,17 @@
       // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
       canvas.style.width = "360px";
       canvas.style.height = "640px";
+
+      // Desktop style: Fixed canvas size, disable resizing
+      document.querySelector("#unity-container").className = "unity-desktop";
+      canvas.className = "unity-desktop";
+
+      // Lock window size for Telegram Desktop
+      window.addEventListener('resize', () => {
+      window.resizeTo(400, 700); // Lock the window size
+    });
     }
+
   //#endregion
 
   //#region Telegram
@@ -167,7 +177,7 @@
             backButton.show();
             backButton.onClick(function () {
                 // Notify Unity that the back button was pressed
-                unityInstance.SendMessage("BackButtonHandler", "OnBackButtonPressed");
+                myUnityInstance.SendMessage("BackButtonHandler", "OnBackButtonPressed");
             });
         }
 
