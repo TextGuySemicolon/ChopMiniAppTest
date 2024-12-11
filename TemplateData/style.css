@@ -27,11 +27,14 @@ body {
 #unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none }
 /* Unity canvas style */
 #unity-canvas {
-background-image: url(./background.png);
-background-size: 360px 640px;
-width: 360px;
-height: 640px;
-}
+    background-image: url('background.png');
+    background-size: cover; /* Ensure the image covers the canvas */
+    background-position: center;
+    width: 100vw; /* Full width of the viewport */
+    max-width: 100%; /* Prevent it from exceeding the viewport width */
+    max-height: 100vh; /* Prevent it from exceeding the viewport height */
+    margin: auto; /* Center it horizontally */
+  }
 /* Hide the canvas while Unity loads */
 #unity-canvas.loading {
 display: none;
